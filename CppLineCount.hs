@@ -14,7 +14,7 @@ getRecursiveContents topdir = do
         if isDirectory 
               then getRecursiveContents path
         else return [path]
-    return $ filter (\p -> takeExtension p `elem` [".cpp",".h",".hpp"]) (concat paths)
+    return $ filter (\p -> takeExtension p `elem` [".cpp",".h",".hpp",".ipp"]) (concat paths)
 
  
 linesCount :: FilePath -> IO Int    
@@ -22,7 +22,11 @@ linesCount filepath=do
          fileHandle<-openFile filepath ReadMode
          hSetEncoding fileHandle latin1
          content <- hGetContents fileHandle
-         return $ length $ lines $ content
+         needreturn<-return $ length $ lines $ content
+         if needreturn>0
+            then return needreturn
+         else
+            return needreturn
 
 quicksort :: (Ord b, Eq a) => [(a, b)] -> [(a, b)]
 quicksort li 
