@@ -3,6 +3,7 @@ import System.Directory (doesDirectoryExist, getDirectoryContents)
 import System.FilePath ((</>) , takeBaseName,takeExtension)
 import System.IO
 import GHC.IO.Encoding(latin1)
+import System.Environment(getArgs)
 
 getRecursiveContents :: FilePath -> IO [FilePath]
 getRecursiveContents topdir = do
@@ -14,7 +15,7 @@ getRecursiveContents topdir = do
         if isDirectory 
               then getRecursiveContents path
         else return [path]
-    return $ filter (\p -> takeExtension p `elem` [".cpp",".h",".hpp",".ipp"]) (concat paths)
+    return $ filter (\p -> takeExtension p `elem` [".c",".cpp",".h",".hpp",".ipp"]) (concat paths)
 
  
 linesCount :: FilePath -> IO Int    
@@ -39,4 +40,11 @@ totalLines filepath=do
     paths<-getRecursiveContents filepath
     listLineCount<-forM paths linesCount
     sequence (map print (quicksort $ zip paths listLineCount))
-    return $ foldl (+) 0 listLineCount
+    print $ foldl (+) 0 listLineCount
+    
+main=do
+    args<-getArgs
+    if length args>0
+        then totalLines $ head args
+    else 
+        print "Wrong arguments"
